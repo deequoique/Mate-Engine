@@ -11,6 +11,7 @@ using System.Reflection;
 using UniVRM10;
 using System;
 using Newtonsoft.Json;
+using PetRemote;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -305,6 +306,7 @@ public class VRMLoader : MonoBehaviour
         if (MEModLoader.Instance != null)
             MEModLoader.Instance.AssignHandlersForCurrentAvatar(loadedModel);
 
+        PetRemoteBootstrap.NotifyAvatarLoaded(loadedModel);
         StartCoroutine(ReleaseRamAndUnloadAssetsCo());
         SettingsHandlerUtility.ReloadAllSettingsHandlers();
     }
@@ -342,6 +344,7 @@ public class VRMLoader : MonoBehaviour
         if (MEModLoader.Instance != null && mainModel != null)
             MEModLoader.Instance.AssignHandlersForCurrentAvatar(mainModel);
 
+        PetRemoteBootstrap.NotifyAvatarLoaded(mainModel);
         StartCoroutine(ReleaseRamAndUnloadAssetsCo());
     }
 
@@ -478,6 +481,7 @@ public class VRMLoader : MonoBehaviour
         if (MEModLoader.Instance != null && mainModel != null)
             MEModLoader.Instance.AssignHandlersForCurrentAvatar(mainModel);
 
+        PetRemoteBootstrap.NotifyAvatarLoaded(mainModel);
         StartCoroutine(ReleaseRamAndUnloadAssetsCo());
         SettingsHandlerUtility.ReloadAllSettingsHandlers();
     }

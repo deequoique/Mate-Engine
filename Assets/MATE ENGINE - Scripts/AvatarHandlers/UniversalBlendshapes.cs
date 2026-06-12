@@ -45,6 +45,9 @@ public class UniversalBlendshapes : MonoBehaviour
 
     private readonly Dictionary<string, ExpressionKey> vrm1ExpressionKeyMap = new();
     private readonly float[] valueCache = new float[keys.Length];
+    private static readonly string[] surpriseAliases = { "surprised", "Surprised" };
+    private readonly Dictionary<string, BlendState> customStates = new();
+    private readonly Dictionary<string, float> customImmediateValues = new();
 
     private void Awake()
     {
@@ -87,6 +90,12 @@ public class UniversalBlendshapes : MonoBehaviour
                     BlendShapeKey.CreateFromPreset(vrm0Presets[i]), states[keys[i]].value
                 ));
             }
+            foreach (var pair in customImmediateValues)
+            {
+                reusableList.Add(new KeyValuePair<BlendShapeKey, float>(
+                    BlendShapeKey.CreateUnknown(pair.Key), pair.Value
+                ));
+            }
             proxy0.SetValues(reusableList);
             proxy0.Apply();
         }
@@ -99,6 +108,14 @@ public class UniversalBlendshapes : MonoBehaviour
                 if (vrm1ExpressionKeyMap.TryGetValue(mapped, out var exprKey))
                 {
                     expr1.SetWeight(exprKey, states[key].value);
+                }
+            }
+
+            foreach (var pair in customImmediateValues)
+            {
+                if (vrm1ExpressionKeyMap.TryGetValue(pair.Key, out var exprKey))
+                {
+                    expr1.SetWeight(exprKey, pair.Value);
                 }
             }
         }
@@ -160,5 +177,131 @@ public class UniversalBlendshapes : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void SetPresetValue(string presetName, float value)
+    {
+        if (string.IsNullOrWhiteSpace(presetName)) return;
+        string normalized = presetName.Trim();
+        float clamped = Mathf.Clamp01(value);
+
+        switch (normalized.ToLowerInvariant())
+        {
+            case "blink": Blink = clamped; return;
+            case "blink_l":
+            case "blinkleft": Blink_L = clamped; return;
+            case "blink_r":
+            case "blinkright": Blink_R = clamped; return;
+            case "lookup": LookUp = clamped; return;
+            case "lookdown": LookDown = clamped; return;
+            case "lookleft": LookLeft = clamped; return;
+            case "lookright": LookRight = clamped; return;
+            case "neutral":
+            case "relaxed": Neutral = clamped; return;
+            case "a":
+            case "aa": A = clamped; return;
+            case "i":
+            case "ih": I = clamped; return;
+            case "u":
+            case "ou": U = clamped; return;
+            case "e":
+            case "ee": E = clamped; return;
+            case "o":
+            case "oh": O = clamped; return;
+            case "joy":
+            case "happy": Joy = clamped; return;
+            case "angry": Angry = clamped; return;
+            case "sorrow":
+            case "sad": Sorrow = clamped; return;
+            case "fun": Fun = clamped; return;
+        }
+
+        SetCustomValue(normalized, clamped);
+    }
+
+    public void SetEmotion(string expressionName, float value)
+    {
+        if (string.IsNullOrWhiteSpace(expressionName)) return;
+        float clamped = Mathf.Clamp01(value);
+        string normalized = expressionName.Trim().ToLowerInvariant();
+
+        switch (normalized)
+        {
+            case "joy":
+            case "happy":
+                Joy = clamped;
+                break;
+            case "sorrow":
+            case "sad":
+                Sorrow = clamped;
+                break;
+            case "angry":
+                Angry = clamped;
+                break;
+            case "surprised":
+                SetSurprised(clamped);
+                break;
+            case "neutral":
+            case "relaxed":
+                Neutral = clamped;
+                break;
+            case "blink":
+                Blink = clamped;
+                break;
+            case "aa":
+            case "a":
+                A = clamped;
+                break;
+            case "ih":
+            case "i":
+                I = clamped;
+                break;
+            case "ou":
+            case "u":
+                U = clamped;
+                break;
+            case "ee":
+            case "e":
+                E = clamped;
+                break;
+            case "oh":
+            case "o":
+                O = clamped;
+                break;
+            default:
+                SetCustomValue(expressionName.Trim(), clamped);
+                break;
+        }
+    }
+
+    public void ClearEmotion(string expressionName)
+    {
+        SetEmotion(expressionName, 0f);
+    }
+
+    void SetSurprised(float value)
+    {
+        for (int i = 0; i < surpriseAliases.Length; i++)
+        {
+            SetCustomValue(surpriseAliases[i], value);
+        }
+    }
+
+    void SetCustomValue(string key, float value)
+    {
+        if (string.IsNullOrWhiteSpace(key)) return;
+        string safeKey = key.Trim();
+        customImmediateValues[safeKey] = value;
+
+        if (!customStates.TryGetValue(safeKey, out var state))
+        {
+            state = new BlendState();
+            customStates[safeKey] = state;
+        }
+
+        state.lastInput = value;
+        state.lastUpdateTime = Time.time;
+        state.holdUntil = Time.time + minHoldTime;
+        state.value = value;
     }
 }

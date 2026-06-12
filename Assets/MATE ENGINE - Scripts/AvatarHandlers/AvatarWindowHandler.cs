@@ -873,6 +873,52 @@ public class AvatarWindowHandler : MonoBehaviour
         return new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
     }
     Vector2 GetUnityWindowPosition() { GetWindowRect(unityHWND, out RECT r); return new Vector2(r.Left, r.Top); }
+    public bool RelocateToCorner(string cornerName, int margin = 24)
+    {
+#if !UNITY_STANDALONE_WIN
+        return false;
+#else
+        if (string.IsNullOrWhiteSpace(cornerName)) return false;
+        if (unityHWND == IntPtr.Zero) unityHWND = Process.GetCurrentProcess().MainWindowHandle;
+        if (unityHWND == IntPtr.Zero) return false;
+        if (!GetWindowRect(unityHWND, out RECT rect)) return false;
+
+        int width = Mathf.Max(1, rect.Right - rect.Left);
+        int height = Mathf.Max(1, rect.Bottom - rect.Top);
+        int screenWidth = Display.main != null ? Display.main.systemWidth : Screen.currentResolution.width;
+        int screenHeight = Display.main != null ? Display.main.systemHeight : Screen.currentResolution.height;
+        int safeMargin = Mathf.Max(0, margin);
+
+        int x = rect.Left;
+        int y = rect.Top;
+        switch (cornerName.Trim().ToLowerInvariant())
+        {
+            case "top-left":
+                x = safeMargin;
+                y = safeMargin;
+                break;
+            case "top-right":
+                x = Mathf.Max(0, screenWidth - width - safeMargin);
+                y = safeMargin;
+                break;
+            case "bottom-left":
+                x = safeMargin;
+                y = Mathf.Max(0, screenHeight - height - safeMargin);
+                break;
+            case "bottom-right":
+                x = Mathf.Max(0, screenWidth - width - safeMargin);
+                y = Mathf.Max(0, screenHeight - height - safeMargin);
+                break;
+            default:
+                return false;
+        }
+
+        ClearSnapAndHide(true);
+        bool moved = MoveWindow(unityHWND, x, y, width, height, true);
+        SetTopMost(SaveLoadHandler.Instance != null ? SaveLoadHandler.Instance.data.isTopmost : true);
+        return moved;
+#endif
+    }
     bool GetUnityClientRect(out RECT r)
     {
         r = new RECT();

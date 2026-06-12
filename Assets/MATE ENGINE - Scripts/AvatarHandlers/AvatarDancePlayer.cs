@@ -14,6 +14,16 @@ namespace CustomDancePlayer
 {
     public class AvatarDanceHandler : MonoBehaviour
     {
+        [Serializable]
+        public class MotionInfo
+        {
+            public string id;
+            public string label;
+            public bool loop;
+            public string stableId;
+            public string author;
+        }
+
         [Header("UI")]
         public Button playButton;
         public Button stopButton;
@@ -984,6 +994,51 @@ namespace CustomDancePlayer
                 if (string.Equals(entries[i].id, title, StringComparison.OrdinalIgnoreCase))
                     return i;
             return -1;
+        }
+
+        public List<MotionInfo> GetAvailableMotions()
+        {
+            if (entries.Count == 0) LoadAllSources();
+
+            var result = new List<MotionInfo>(entries.Count);
+            for (int i = 0; i < entries.Count; i++)
+            {
+                var e = entries[i];
+                result.Add(new MotionInfo
+                {
+                    id = e.id,
+                    label = e.id,
+                    loop = false,
+                    stableId = e.stableId,
+                    author = e.author
+                });
+            }
+            return result;
+        }
+
+        public bool TryPlayByName(string motionName)
+        {
+            if (string.IsNullOrWhiteSpace(motionName)) return false;
+            if (entries.Count == 0) LoadAllSources();
+
+            string wanted = motionName.Trim();
+            for (int i = 0; i < entries.Count; i++)
+            {
+                var e = entries[i];
+                if (string.Equals(e.id, wanted, StringComparison.OrdinalIgnoreCase)) return PlayIndex(i);
+                if (!string.IsNullOrEmpty(e.stableId) && string.Equals(e.stableId, wanted, StringComparison.OrdinalIgnoreCase)) return PlayIndex(i);
+            }
+
+            int index = FindIndexByTitle(wanted);
+            return index >= 0 && PlayIndex(index);
+        }
+
+        public bool TryPlayFirst()
+        {
+            if (entries.Count == 0) LoadAllSources();
+            if (entries.Count == 0) return false;
+            int fallback = currentIndex >= 0 && currentIndex < entries.Count ? currentIndex : 0;
+            return PlayIndex(fallback);
         }
 
         bool IsModEnabled(string id)
