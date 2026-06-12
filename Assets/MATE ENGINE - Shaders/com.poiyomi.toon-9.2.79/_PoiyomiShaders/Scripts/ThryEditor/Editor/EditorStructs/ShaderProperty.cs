@@ -120,7 +120,7 @@ namespace Thry.ThryEditor
 
         public override void CopyFrom(Material src, bool applyDrawers = true, bool deepCopy = true, bool copyReferenceProperties = true, HashSet<UnityEngine.Rendering.ShaderPropertyType> skipPropertyTypes = null, HashSet<string> skipPropertyNames = null)
         {
-            if (skipPropertyTypes?.Contains(MaterialProperty.propertyType) == true) return;
+            if (skipPropertyTypes?.Contains(MaterialProperty.type) == true) return;
             if (skipPropertyNames?.Contains(MaterialProperty.name) == true) return;
 
             UpdatedMaterialPropertyReference();
@@ -143,7 +143,7 @@ namespace Thry.ThryEditor
 
         public override void CopyFrom(ShaderPart srcPart, bool applyDrawers = true, bool deepCopy = true, bool copyReferenceProperties = true, HashSet<UnityEngine.Rendering.ShaderPropertyType> skipPropertyTypes = null, HashSet<string> skipPropertyNames = null)
         {
-            if(skipPropertyTypes?.Contains(MaterialProperty.propertyType) == true) return;
+            if(skipPropertyTypes?.Contains(MaterialProperty.type) == true) return;
             if(skipPropertyNames?.Contains(MaterialProperty.name) == true) return;
             if(skipPropertyNames?.Contains(srcPart.MaterialProperty.name) == true) return;
             if (srcPart is ShaderProperty == false) return;
@@ -170,7 +170,7 @@ namespace Thry.ThryEditor
 
         public override void CopyTo(Material[] targets, bool applyDrawers = true, bool deepCopy = true, bool copyReferenceProperties = true, HashSet<UnityEngine.Rendering.ShaderPropertyType> skipPropertyTypes = null, HashSet<string> skipPropertyNames = null)
         {
-            if(skipPropertyTypes?.Contains(MaterialProperty.propertyType) == true) return;
+            if(skipPropertyTypes?.Contains(MaterialProperty.type) == true) return;
             if(skipPropertyNames?.Contains(MaterialProperty.name) == true) return;
 
             UpdatedMaterialPropertyReference();
@@ -192,7 +192,7 @@ namespace Thry.ThryEditor
 
         public override void CopyTo(ShaderPart targetPart, bool applyDrawers = true, bool deepCopy = true, bool copyReferenceProperties = true, HashSet<UnityEngine.Rendering.ShaderPropertyType> skipPropertyTypes = null, HashSet<string> skipPropertyNames = null)
         {
-            if(skipPropertyTypes?.Contains(MaterialProperty.propertyType) == true) return;
+            if(skipPropertyTypes?.Contains(MaterialProperty.type) == true) return;
             if(skipPropertyNames?.Contains(MaterialProperty.name) == true) return;
             if(skipPropertyNames?.Contains(targetPart.MaterialProperty.name) == true) return;
             if (targetPart is ShaderProperty == false) return;
@@ -264,7 +264,7 @@ namespace Thry.ThryEditor
             MyMaterialEditor.GetPropertyHeight(MaterialProperty, MaterialProperty.displayName);
             _activeProperty = null;
 
-            if (MaterialProperty.propertyType == UnityEngine.Rendering.ShaderPropertyType.Vector && _doForceIntoOneLine == false)
+            if (MaterialProperty.type == UnityEngine.Rendering.ShaderPropertyType.Vector && _doForceIntoOneLine == false)
             {
                 this._doCustomHeightOffset = _drawer == null;
                 this._customHeightOffset = -EditorGUIUtility.singleLineHeight;
@@ -374,7 +374,7 @@ namespace Thry.ThryEditor
             else if (rect != null)
             {
                 // Custom Drawing for Range, because it doesnt draw correctly if inside the big texture property
-                if (_drawer == null && MaterialProperty.propertyType == UnityEngine.Rendering.ShaderPropertyType.Range)
+                if (_drawer == null && MaterialProperty.type == UnityEngine.Rendering.ShaderPropertyType.Range)
                 {
                     MaterialProperty.floatValue = EditorGUI.Slider(rect.Value, content, MaterialProperty.floatValue, 0, MaterialProperty.rangeLimits.y);
                 }
@@ -415,7 +415,7 @@ namespace Thry.ThryEditor
         {
             if (MyShaderUI.ActiveRenderer != null && MyShaderUI.IsInAnimationMode && IsAnimatable && !IsAnimated)
             {
-                if (MaterialProperty.propertyType == UnityEngine.Rendering.ShaderPropertyType.Texture ?
+                if (MaterialProperty.type == UnityEngine.Rendering.ShaderPropertyType.Texture ?
                     AnimationMode.IsPropertyAnimated(MyShaderUI.ActiveRenderer, "material." + MaterialProperty.name + "_ST.x") :
                     AnimationMode.IsPropertyAnimated(MyShaderUI.ActiveRenderer, "material." + MaterialProperty.name))
                     SetAnimated(true, false);
@@ -432,7 +432,7 @@ namespace Thry.ThryEditor
             {
                 isEnabled &= Options.condition_enable.Test();
             }
-            if (!isEnabled && MaterialProperty != null && MaterialProperty.propertyType == UnityEngine.Rendering.ShaderPropertyType.Texture && MaterialProperty.textureValue != null)
+            if (!isEnabled && MaterialProperty != null && MaterialProperty.type == UnityEngine.Rendering.ShaderPropertyType.Texture && MaterialProperty.textureValue != null)
             {
                 unusedList.Add(MaterialProperty.name);
             }

@@ -52,7 +52,7 @@ namespace lilToon
 
         public UnityEngine.Rendering.ShaderPropertyFlags flags
         {
-            get { return p.propertyFlags; }
+            get { return p.flags; }
             private set { }
         }
 
@@ -82,7 +82,7 @@ namespace lilToon
 
         public UnityEngine.Rendering.ShaderPropertyType type
         {
-            get { return p.propertyType; }
+            get { return p.type; }
             private set { }
         }
 

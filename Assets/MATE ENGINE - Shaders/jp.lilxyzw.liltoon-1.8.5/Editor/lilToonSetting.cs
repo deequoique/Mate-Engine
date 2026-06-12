@@ -763,8 +763,8 @@ public class lilToonSetting : ScriptableObject
                 bool enterChildren = true;
                 while(prop.Next(enterChildren))
                 {
-                    enterChildren = prop.propertyType != SerializedPropertyType.String;
-                    if(prop.propertyType == SerializedPropertyType.ObjectReference)
+                    enterChildren = prop.type != SerializedPropertyType.String;
+                    if(prop.type == SerializedPropertyType.ObjectReference)
                         Add(prop.objectReferenceValue);
                 }
             }

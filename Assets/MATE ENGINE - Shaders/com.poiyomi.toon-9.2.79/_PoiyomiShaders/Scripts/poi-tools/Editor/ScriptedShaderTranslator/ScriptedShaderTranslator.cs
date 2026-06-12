@@ -176,7 +176,7 @@ namespace Poi.Tools.ShaderTranslator
             if(!context.ThryShaderEditor.PropertyDictionary.TryGetValue(propertyName, out var thryProperty))
                 return;
 
-            var propType = thryProperty.MaterialProperty.propertyType;
+            var propType = thryProperty.MaterialProperty.type;
             switch(propType)
             {
                 case UnityEngine.Rendering.ShaderPropertyType.Color:

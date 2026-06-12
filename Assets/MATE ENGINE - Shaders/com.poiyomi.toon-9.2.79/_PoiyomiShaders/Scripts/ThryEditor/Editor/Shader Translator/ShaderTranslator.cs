@@ -42,7 +42,7 @@ namespace Thry.ThryEditor.ShaderTranslations
                 if(editor.PropertyDictionary.TryGetValue(trans.Target, out ShaderProperty targetProp))
                 {
                     SerializedProperty p;
-                    switch(targetProp.MaterialProperty.propertyType)
+                    switch(targetProp.MaterialProperty.type)
                     {
                         case UnityEngine.Rendering.ShaderPropertyType.Float:
                         case UnityEngine.Rendering.ShaderPropertyType.Range:
@@ -218,7 +218,7 @@ namespace Thry.ThryEditor.ShaderTranslations
             if(!editor.PropertyDictionary.TryGetValue(propertyName, out var prop))
                 return;
 
-            switch(prop.MaterialProperty.propertyType)
+            switch(prop.MaterialProperty.type)
             {
                 case UnityEngine.Rendering.ShaderPropertyType.Float:
 #if UNITY_2021_1_OR_NEWER

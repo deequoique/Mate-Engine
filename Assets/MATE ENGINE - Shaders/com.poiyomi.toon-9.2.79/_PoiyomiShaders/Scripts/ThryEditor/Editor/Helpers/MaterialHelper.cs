@@ -63,29 +63,29 @@ namespace Thry.ThryEditor.Helpers
         public static void SetValue(MaterialProperty p, string value)
         {
             object prev = null;
-            if (p.propertyType == UnityEngine.Rendering.ShaderPropertyType.Texture)
+            if (p.type == UnityEngine.Rendering.ShaderPropertyType.Texture)
             {
                 prev = p.textureValue;
                 p.textureValue = AssetDatabase.LoadAssetAtPath<Texture>(value);
             }
-            else if (p.propertyType == UnityEngine.Rendering.ShaderPropertyType.Float || p.propertyType == UnityEngine.Rendering.ShaderPropertyType.Range)
+            else if (p.type == UnityEngine.Rendering.ShaderPropertyType.Float || p.type == UnityEngine.Rendering.ShaderPropertyType.Range)
             {
                 prev = p.floatValue;
                 p.floatValue = Parser.ParseFloat(value, p.floatValue);
             }
 #if UNITY_2022_1_OR_NEWER
-            else if (p.propertyType == UnityEngine.Rendering.ShaderPropertyType.Int)
+            else if (p.type == UnityEngine.Rendering.ShaderPropertyType.Int)
             {
                 prev = p.intValue;
                 p.intValue = (int)Parser.ParseFloat(value, p.intValue);
             }
 #endif
-            else if (p.propertyType == UnityEngine.Rendering.ShaderPropertyType.Vector)
+            else if (p.type == UnityEngine.Rendering.ShaderPropertyType.Vector)
             {
                 prev = p.vectorValue;
                 p.vectorValue = Converter.StringToVector(value);
             }
-            else if (p.propertyType == UnityEngine.Rendering.ShaderPropertyType.Color)
+            else if (p.type == UnityEngine.Rendering.ShaderPropertyType.Color)
             {
                 prev = p.colorValue;
                 p.colorValue = Converter.StringToColor(value);
@@ -98,7 +98,7 @@ namespace Thry.ThryEditor.Helpers
         {
             if (!source.HasProperty(target.name)) return;
             object prev = null;
-            switch (target.propertyType)
+            switch (target.type)
             {
                 case UnityEngine.Rendering.ShaderPropertyType.Float:
                 case UnityEngine.Rendering.ShaderPropertyType.Range:
@@ -134,7 +134,7 @@ namespace Thry.ThryEditor.Helpers
         public static void CopyValue(MaterialProperty source, MaterialProperty target)
         {
             object prev = null;
-            switch (target.propertyType)
+            switch (target.type)
             {
                 case UnityEngine.Rendering.ShaderPropertyType.Float:
                 case UnityEngine.Rendering.ShaderPropertyType.Range:
@@ -179,7 +179,7 @@ namespace Thry.ThryEditor.Helpers
 
         public static object GetValue(MaterialProperty property)
         {
-            switch (property.propertyType)
+            switch (property.type)
             {
                 case UnityEngine.Rendering.ShaderPropertyType.Float:
                 case UnityEngine.Rendering.ShaderPropertyType.Range:

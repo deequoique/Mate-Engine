@@ -92,7 +92,7 @@ namespace Thry.ThryEditor
                             }
                             return 0f;
                         }
-                        switch (prop.propertyType)
+                        switch (prop.type)
                         {
                             case UnityEngine.Rendering.ShaderPropertyType.Float:
                             case UnityEngine.Rendering.ShaderPropertyType.Range:

@@ -244,7 +244,7 @@ namespace Thry.ThryEditor
                     {
                         if (MaterialProperty == null)
                             return null;
-                        switch (MaterialProperty.propertyType)
+                        switch (MaterialProperty.type)
                         {
                             case UnityEngine.Rendering.ShaderPropertyType.Float:
                             case UnityEngine.Rendering.ShaderPropertyType.Range:
@@ -289,7 +289,7 @@ namespace Thry.ThryEditor
 
                 if(_isPropertyValueDefault == null)
                 {
-                    switch(MaterialProperty.propertyType)
+                    switch(MaterialProperty.type)
                     {
                         case UnityEngine.Rendering.ShaderPropertyType.Float:
                         case UnityEngine.Rendering.ShaderPropertyType.Range:
@@ -460,7 +460,7 @@ namespace Thry.ThryEditor
 
         private void CopyAlternativeUpgradeValues()
         {
-            UnityEngine.Rendering.ShaderPropertyType type = this.MaterialProperty.propertyType;
+            UnityEngine.Rendering.ShaderPropertyType type = this.MaterialProperty.type;
             if (type == UnityEngine.Rendering.ShaderPropertyType.Color) type = UnityEngine.Rendering.ShaderPropertyType.Vector;
             if (type == UnityEngine.Rendering.ShaderPropertyType.Range) type = UnityEngine.Rendering.ShaderPropertyType.Float;
 
@@ -970,7 +970,7 @@ namespace Thry.ThryEditor
         {
             MaterialProperty prop = MaterialProperty;
             Shader shader = ShaderEditor.Active.Shader;
-            switch (prop.propertyType)
+            switch (prop.type)
             {
                 case UnityEngine.Rendering.ShaderPropertyType.Float:
                 case UnityEngine.Rendering.ShaderPropertyType.Range:
@@ -1021,7 +1021,7 @@ namespace Thry.ThryEditor
         {
             string propName = MaterialProperty.name;
             if (IsRenaming && !ShaderEditor.Active.IsLockedMaterial) propName = propName + "_" + ShaderEditor.Active.RenamedPropertySuffix;
-            if (MaterialProperty.propertyType == UnityEngine.Rendering.ShaderPropertyType.Texture) propName = propName + "_ST";
+            if (MaterialProperty.type == UnityEngine.Rendering.ShaderPropertyType.Texture) propName = propName + "_ST";
             return propName;
         }
 
@@ -1053,19 +1053,19 @@ namespace Thry.ThryEditor
             AnimationClip clip = new AnimationClip();
 
             string propertyname = "material." + GetAnimatedPropertyName();
-            if (MaterialProperty.propertyType == UnityEngine.Rendering.ShaderPropertyType.Float || MaterialProperty.propertyType == UnityEngine.Rendering.ShaderPropertyType.Range)
+            if (MaterialProperty.type == UnityEngine.Rendering.ShaderPropertyType.Float || MaterialProperty.type == UnityEngine.Rendering.ShaderPropertyType.Range)
             {
                 clip.SetCurve(path, rendererType, propertyname, new AnimationCurve(new Keyframe(0, MaterialProperty.floatValue)));
                 keyframeList.Add(ClipToKeyFrame(animationCurveType, clip, path, "", rendererType));
             }
 #if UNITY_2022_1_OR_NEWER
-            else if (MaterialProperty.propertyType == UnityEngine.Rendering.ShaderPropertyType.Int)
+            else if (MaterialProperty.type == UnityEngine.Rendering.ShaderPropertyType.Int)
             {
                 clip.SetCurve(path, rendererType, propertyname, new AnimationCurve(new Keyframe(0, MaterialProperty.intValue)));
                 keyframeList.Add(ClipToKeyFrame(animationCurveType, clip, path, "", rendererType));
             }
 #endif
-            else if (MaterialProperty.propertyType == UnityEngine.Rendering.ShaderPropertyType.Color)
+            else if (MaterialProperty.type == UnityEngine.Rendering.ShaderPropertyType.Color)
             {
                 clip.SetCurve(path, rendererType, propertyname + ".r", new AnimationCurve(new Keyframe(0, MaterialProperty.colorValue.r)));
                 clip.SetCurve(path, rendererType, propertyname + ".g", new AnimationCurve(new Keyframe(0, MaterialProperty.colorValue.g)));
@@ -1076,7 +1076,7 @@ namespace Thry.ThryEditor
                 keyframeList.Add(ClipToKeyFrame(animationCurveType, clip, path, ".b", rendererType));
                 keyframeList.Add(ClipToKeyFrame(animationCurveType, clip, path, ".a", rendererType));
             }
-            else if (MaterialProperty.propertyType == UnityEngine.Rendering.ShaderPropertyType.Vector)
+            else if (MaterialProperty.type == UnityEngine.Rendering.ShaderPropertyType.Vector)
             {
                 clip.SetCurve(path, rendererType, propertyname + ".x", new AnimationCurve(new Keyframe(0, MaterialProperty.vectorValue.x)));
                 clip.SetCurve(path, rendererType, propertyname + ".y", new AnimationCurve(new Keyframe(0, MaterialProperty.vectorValue.y)));
@@ -1087,7 +1087,7 @@ namespace Thry.ThryEditor
                 keyframeList.Add(ClipToKeyFrame(animationCurveType, clip, path, ".z", rendererType));
                 keyframeList.Add(ClipToKeyFrame(animationCurveType, clip, path, ".w", rendererType));
             }
-            else if (MaterialProperty.propertyType == UnityEngine.Rendering.ShaderPropertyType.Texture)
+            else if (MaterialProperty.type == UnityEngine.Rendering.ShaderPropertyType.Texture)
             {
                 clip.SetCurve(path, rendererType, propertyname + ".x", new AnimationCurve(new Keyframe(0, MaterialProperty.textureScaleAndOffset.x)));
                 clip.SetCurve(path, rendererType, propertyname + ".y", new AnimationCurve(new Keyframe(0, MaterialProperty.textureScaleAndOffset.y)));
@@ -1132,7 +1132,7 @@ namespace Thry.ThryEditor
             PropertyValue = FetchPropertyValue();
             SetIsPropertyValueDefaultDirty();
             if(PropertyValueChanged != null)
-                PropertyValueChanged(new PropertyValueEventArgs(MaterialProperty?.propertyType, previousValue, PropertyValue));
+                PropertyValueChanged(new PropertyValueEventArgs(MaterialProperty?.type, previousValue, PropertyValue));
         }
 
         public bool CheckForValueChange()
@@ -1167,7 +1167,7 @@ namespace Thry.ThryEditor
         public object currentValue { get; private set; }
         public PropertyValueEventArgs(UnityEngine.Rendering.ShaderPropertyType? propertyType, object previousValue, object newValue)
         {
-            this.propertyType = propertyType;
+            this.type = propertyType;
             this.previousValue = previousValue;
             this.currentValue = newValue;
         }

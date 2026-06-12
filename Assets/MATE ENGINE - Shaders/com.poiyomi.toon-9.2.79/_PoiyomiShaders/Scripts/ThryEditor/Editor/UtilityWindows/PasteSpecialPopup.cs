@@ -152,7 +152,7 @@ namespace Thry.ThryEditor
         {
             using(new EditorGUI.DisabledScope(true))
             {
-                switch(prop.propertyType)
+                switch(prop.type)
                 {
                     case UnityEngine.Rendering.ShaderPropertyType.Color:
                         EditorGUILayout.ColorField(prop.colorValue, propertyWidth);

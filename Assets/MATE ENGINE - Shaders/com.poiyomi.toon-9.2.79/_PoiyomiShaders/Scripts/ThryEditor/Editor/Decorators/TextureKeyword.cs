@@ -32,7 +32,7 @@ namespace Thry.ThryEditor.Decorators
 		private void UpdateKeyword(MaterialProperty prop, MaterialEditor editor)
 		{
 			if (prop == null) return;
-			if (prop.propertyType != UnityEngine.Rendering.ShaderPropertyType.Texture) return;
+			if (prop.type != UnityEngine.Rendering.ShaderPropertyType.Texture) return;
 			if (editor?.targets == null) return;
 
 			string keyword = GetKeywordName(prop);

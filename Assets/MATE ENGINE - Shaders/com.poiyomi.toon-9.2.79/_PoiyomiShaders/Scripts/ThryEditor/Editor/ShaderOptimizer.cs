@@ -728,7 +728,7 @@ namespace Thry.ThryEditor
             if(prop == null) return false;
             // if not a texture, but has non-modifiable texture data flag, is used as indicator to prevent locking
             return prop.displayName.EndsWith(ExemptFromLockingSuffix, StringComparison.Ordinal) 
-                || (prop.propertyType != ShaderPropertyType.Texture && prop.propertyFlags.HasFlag(ShaderPropertyFlags.NonModifiableTextureData))
+                || (prop.type != ShaderPropertyType.Texture && prop.flags.HasFlag(ShaderPropertyFlags.NonModifiableTextureData))
                 || GetAttributes(prop).Contains("DoNotLock");
         }
 
@@ -736,7 +736,7 @@ namespace Thry.ThryEditor
         {
             if(part.MaterialProperty == null) return false;
             return part.HasAttribute("DoNotLock")
-            || (part.MaterialProperty.propertyType != ShaderPropertyType.Texture && part.MaterialProperty.propertyFlags.HasFlag(ShaderPropertyFlags.NonModifiableTextureData))
+            || (part.MaterialProperty.type != ShaderPropertyType.Texture && part.MaterialProperty.flags.HasFlag(ShaderPropertyFlags.NonModifiableTextureData))
             || part.MaterialProperty.displayName.EndsWith(ExemptFromLockingSuffix, StringComparison.Ordinal);
         }
 
@@ -751,7 +751,7 @@ namespace Thry.ThryEditor
 
         private static bool CopyProperty(Material material, MaterialProperty source, string targetName)
         {
-            switch (source.propertyType)
+            switch (source.type)
             {
                 case ShaderPropertyType.Color:
                     material.SetColor(targetName, source.colorValue);
@@ -1005,7 +1005,7 @@ namespace Thry.ThryEditor
                 else
                 {
 
-                    switch (prop.propertyType)
+                    switch (prop.type)
                     {
                         case ShaderPropertyType.Color:
                             stringBuilder.Append(m.GetColor(propName).ToString());
@@ -1108,7 +1108,7 @@ namespace Thry.ThryEditor
             {
                 if (prop == null) continue;
                 // Every property gets turned into a preprocessor variable
-                switch (prop.propertyType)
+                switch (prop.type)
                 {
                     case ShaderPropertyType.Texture:
                         if (prop.textureValue != null)
@@ -1163,7 +1163,7 @@ namespace Thry.ThryEditor
                                 animatedPropsToDuplicate.Add(new RenamingProperty(prop, prop.name, prop.name + "_" + animPropertySuffix));
                             else
                                 animatedPropsToRename.Add(new RenamingProperty(prop, prop.name, prop.name + "_" + animPropertySuffix));
-                            if (prop.propertyType == ShaderPropertyType.Texture)
+                            if (prop.type == ShaderPropertyType.Texture)
                             {
                                 animatedPropsToRename.Add(new RenamingProperty(prop, prop.name + "_ST", prop.name + "_" + animPropertySuffix + "_ST"));
                                 animatedPropsToRename.Add(new RenamingProperty(prop, prop.name + "_TexelSize", prop.name + "_" + animPropertySuffix + "_TexelSize"));
@@ -1177,19 +1177,19 @@ namespace Thry.ThryEditor
                 if (IsPropertyExcemptFromLocking(prop)) continue;
 
                 PropertyData propData;
-                switch(prop.propertyType)
+                switch(prop.type)
                 {
                     case ShaderPropertyType.Color:
                         propData = new PropertyData();
                         propData.type = PropertyType.Vector;
                         propData.name = prop.name;
-                        if ((prop.propertyFlags & ShaderPropertyFlags.HDR) != 0)
+                        if ((prop.flags & ShaderPropertyFlags.HDR) != 0)
                         {
-                            if ((prop.propertyFlags & ShaderPropertyFlags.Gamma) != 0)
+                            if ((prop.flags & ShaderPropertyFlags.Gamma) != 0)
                                 propData.value = prop.colorValue.linear;
                             else propData.value = prop.colorValue;
                         }
-                        else if ((prop.propertyFlags & ShaderPropertyFlags.Gamma) != 0)
+                        else if ((prop.flags & ShaderPropertyFlags.Gamma) != 0)
                             propData.value = prop.colorValue;
                         else propData.value = prop.colorValue.linear;
                         if (PlayerSettings.colorSpace == ColorSpace.Gamma) propData.value = prop.colorValue;
